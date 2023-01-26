@@ -65,6 +65,18 @@ body > .container > #list-input {
   -o-border-radius: 5px;
 }
 
+.edit-item {
+  margin-left: -5px;
+  padding: 10px;
+  width: calc(100% - 20px);
+  font-size: 1.5rem;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+
 /* list-output style */
 
 body > .container > #list-output {
@@ -129,6 +141,7 @@ body > .container > #list-output > footer > .counter-clear > .item-count {
 }
 
 body > .container > #list-output > footer > .counter-clear > .clear {
+  display: none;
   background-color: #c94c3a;
   color: #fff;
   border: 1px solid #aaa;
@@ -139,6 +152,7 @@ body > .container > #list-output > footer > .counter-clear > .clear {
   -moz-border-radius: 5px;
   -ms-border-radius: 5px;
   -o-border-radius: 5px;
+  cursor: pointer;
 }
 
 body .hint,
