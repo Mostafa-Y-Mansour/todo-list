@@ -5,21 +5,32 @@ let checkAll = document.querySelector(".check-all");
 // add todo item to the output function
 
 window.onload = () => {
+  getItemsFromLocalStorage();
   checkItems();
   itemsLeftCountFunction();
   clearItemsCountFunction();
+  doubleClickEvent();
 };
 
 input.addEventListener("keypress", (event) => {
   if (event.key === "Enter") {
     addItem();
+    checkItems();
+    ifAllChecked();
+    itemsLeftCountFunction();
+    clearItemsCountFunction();
+    doubleClickEvent();
+    addItemsToLocalStorage();
   }
+});
+
+input.onblur = () => {
   checkItems();
   ifAllChecked();
   itemsLeftCountFunction();
   clearItemsCountFunction();
   doubleClickEvent();
-});
+};
 
 function addItem() {
   let fragment = document.createDocumentFragment();
@@ -136,6 +147,7 @@ function clearItemsCountFunction() {
 
 // clear items event
 clearItem.onclick = () => {
+  deleteItemFromLocalStorage();
   let checKedItems = document.querySelectorAll(".checked");
   for (let i = 0; i < checKedItems.length; i++) {
     checKedItems[i].remove();
@@ -146,15 +158,19 @@ clearItem.onclick = () => {
 // double click to change the input value
 
 function doubleClickEvent() {
-  let items = document.querySelectorAll(".item");
+  let items = document.querySelectorAll(".todo-stuff > *");
+  for (let i = 0; i < items.length; i++) {
+    let itemText = items[i].lastElementChild.innerText;
+    items[i].addEventListener("dblclick", () => {
+      items[i].innerHTML = `
+      <input type="text" name="list" class="edit-item" placeholder="Nothing to show!" ">
+      `;
 
-  items.forEach((item) => {
-    item.addEventListener("dblclick", () => {
-      item.innerHTML = `<input type="text" name="list" class="edit-item" placeholder="Nothing to show!" value="${item.lastElementChild.innerHTML}">`;
+      items[i].firstElementChild.value = itemText;
 
-      let editItem = item.firstElementChild;
+      let editItem = items[i].firstElementChild;
       function editItems() {
-        item.innerHTML = `
+        items[i].innerHTML = `
                   <i class="fas fa-check-square"></i>
                   <p>${editItem.value || "Nothing to show!"}</p>
                   `;
@@ -170,7 +186,56 @@ function doubleClickEvent() {
       });
       editItem.addEventListener("blur", editItems);
     });
-  });
+  }
 }
 
-doubleClickEvent();
+// adding all the to do list to local storage
+function addItemsToLocalStorage() {
+  let items = document.querySelectorAll(".todo-stuff > *");
+  let itemsText = [];
+  items.forEach((item) => {
+    itemsText.push(item.lastElementChild.innerText);
+  });
+  window.localStorage.setItem("itemsText", itemsText);
+}
+
+function getItemsFromLocalStorage() {
+  if (window.localStorage.getItem("itemsText")) {
+    let localItems = window.localStorage.getItem("itemsText").split(",");
+
+    localItems.forEach((localItem) => {
+      let fragment = document.createDocumentFragment();
+      let item = document.createElement("div");
+      item.classList.add("item");
+      item.classList.add("check");
+
+      let i = document.createElement("i");
+      i.classList.add("fas");
+      i.classList.add("fa-check-square");
+
+      let p = document.createElement("p");
+      p.innerHTML = localItem;
+
+      item.appendChild(i);
+      item.appendChild(p);
+
+      fragment.appendChild(item);
+      todoStuff.appendChild(fragment);
+    });
+  }
+}
+
+function deleteItemFromLocalStorage() {
+  let items = document.querySelectorAll(".todo-stuff > .checked");
+  let localItems = window.localStorage.getItem("itemsText").split(",");
+
+  items.forEach((item) => {
+    for (let i = 0; i < localItems.length; i++) {
+      let itemText = item.lastElementChild.innerText;
+      if (itemText === localItems[i]) {
+        localItems.splice(i, 1);
+        window.localStorage.setItem("itemsText", localItems);
+      }
+    }
+  });
+}

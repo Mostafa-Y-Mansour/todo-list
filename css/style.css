@@ -51,6 +51,10 @@ body > .container {
   -o-border-radius: 5px;
 }
 
+.show {
+  display: block !important;
+}
+
 /* list-input style */
 
 body > .container > #list-input {
